@@ -11,8 +11,12 @@ function esc(text: string): string {
 function formatDate(dateStr: string): string {
   if (!dateStr) return '';
   // Parse as local date to avoid timezone offset shifting the day
-  const [year, month, day] = dateStr.split('-').map(Number);
+  const parts = dateStr.split('-').map(Number);
+  if (parts.length !== 3 || parts.some(isNaN)) return '';
+  const [year, month, day] = parts;
+  if (month < 1 || month > 12 || day < 1 || day > 31) return '';
   const date = new Date(year, month - 1, day);
+  if (isNaN(date.getTime())) return '';
   return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
@@ -76,7 +80,7 @@ function renderCoverPage(data: NdaFormData): string {
       <div class="field-value">
         <div class="checkbox-item${mndaFixed ? ' checked' : ''}">
           <span class="checkbox">${mndaFixed ? '&#9745;' : '&#9744;'}</span>
-          Expires <strong>${mndaFixed ? `${data.mndaTermYears} year${data.mndaTermYears !== 1 ? 's' : ''}` : '1 year(s)'}</strong> from Effective Date.
+          Expires <strong>${data.mndaTermYears} year${data.mndaTermYears !== 1 ? 's' : ''}</strong> from Effective Date.
         </div>
         <div class="checkbox-item${!mndaFixed ? ' checked' : ''}">
           <span class="checkbox">${!mndaFixed ? '&#9745;' : '&#9744;'}</span>
@@ -91,7 +95,7 @@ function renderCoverPage(data: NdaFormData): string {
       <div class="field-value">
         <div class="checkbox-item${confFixed ? ' checked' : ''}">
           <span class="checkbox">${confFixed ? '&#9745;' : '&#9744;'}</span>
-          <strong>${confFixed ? `${data.confidentialityTermYears} year${data.confidentialityTermYears !== 1 ? 's' : ''}` : '1 year(s)'}</strong> from Effective Date, but in the case of trade secrets until Confidential Information is no longer considered a trade secret under applicable laws.
+          <strong>${data.confidentialityTermYears} year${data.confidentialityTermYears !== 1 ? 's' : ''}</strong> from Effective Date, but in the case of trade secrets until Confidential Information is no longer considered a trade secret under applicable laws.
         </div>
         <div class="checkbox-item${!confFixed ? ' checked' : ''}">
           <span class="checkbox">${!confFixed ? '&#9745;' : '&#9744;'}</span>

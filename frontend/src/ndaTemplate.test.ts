@@ -361,6 +361,41 @@ describe('generateStandaloneHtml', () => {
   });
 });
 
+// ── formatDate edge cases (from review agent findings) ────────────────────────
+
+describe('formatDate edge cases', () => {
+  it('returns empty string for malformed date string', () => {
+    const html = generateNdaHtml(makeData({ effectiveDate: 'not-a-date' }));
+    // Should show placeholder, not "Invalid Date"
+    expect(html).not.toContain('Invalid Date');
+    expect(html).toContain('placeholder');
+  });
+
+  it('does not silently roll over invalid month/day', () => {
+    // "2026-13-45" would silently become Feb 2027 without validation
+    const html = generateNdaHtml(makeData({ effectiveDate: '2026-13-45' }));
+    expect(html).not.toContain('February');
+    expect(html).not.toContain('2027');
+  });
+});
+
+// ── Checkbox year display accuracy (from review agent findings) ───────────────
+
+describe('cover page checkbox year display', () => {
+  it('shows the actual mndaTermYears in the unchecked fixed option when perpetual is selected', () => {
+    // Previously showed hardcoded "1 year(s)" — should show actual value
+    const html = generateNdaHtml(makeData({ mndaTermType: 'perpetual', mndaTermYears: 3 }));
+    expect(html).toContain('3 years');
+    expect(html).not.toMatch(/Expires <strong>1 year\(s\)<\/strong>/);
+  });
+
+  it('shows the actual confidentialityTermYears in unchecked fixed option when perpetual is selected', () => {
+    const html = generateNdaHtml(makeData({ confidentialityTermType: 'perpetual', confidentialityTermYears: 5 }));
+    expect(html).toContain('5 years');
+    expect(html).not.toMatch(/<strong>1 year\(s\)<\/strong> from Effective Date/);
+  });
+});
+
 // ── Edge cases ────────────────────────────────────────────────────────────────
 
 describe('edge cases', () => {

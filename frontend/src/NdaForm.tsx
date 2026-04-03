@@ -17,7 +17,7 @@ export default function NdaForm(props: Props) {
   const setNum = (key: 'mndaTermYears' | 'confidentialityTermYears') =>
     (e: Event) => {
       const val = parseInt((e.currentTarget as HTMLInputElement).value, 10);
-      props.setData(prev => ({ ...prev, [key]: isNaN(val) || val < 1 ? 1 : val }));
+      props.setData(prev => ({ ...prev, [key]: isNaN(val) || val < 1 ? 1 : val > 99 ? 99 : val }));
     };
 
   const setRadio = (key: 'mndaTermType' | 'confidentialityTermType', value: 'fixed' | 'perpetual') =>

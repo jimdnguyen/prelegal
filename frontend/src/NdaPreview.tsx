@@ -38,12 +38,14 @@ export default function NdaPreview(props: Props) {
   function printDocument() {
     const url = createBlobUrl(props.data);
     const win = window.open(url, '_blank');
-    if (win) {
-      win.addEventListener('load', () => {
-        win.print();
-        URL.revokeObjectURL(url);
-      });
+    if (!win) {
+      URL.revokeObjectURL(url);
+      return;
     }
+    win.addEventListener('load', () => {
+      win.print();
+      URL.revokeObjectURL(url);
+    });
   }
 
   return (
