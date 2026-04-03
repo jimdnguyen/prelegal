@@ -93,6 +93,10 @@ body {
   overflow: hidden;
 }
 
+.app-main > * {
+  min-height: 0;
+}
+
 /* ── Form Pane ─────────────────────────────────── */
 .form-pane {
   background: #fff;
