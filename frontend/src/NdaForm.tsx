@@ -61,7 +61,7 @@ export default function NdaForm(props: Props) {
                 checked={props.data.mndaTermType === 'fixed'}
                 onChange={setRadio('mndaTermType', 'fixed')}
               />
-              Expires after
+              Expires after{' '}
               <Show when={props.data.mndaTermType === 'fixed'}>
                 <input
                   type="number"
@@ -75,7 +75,7 @@ export default function NdaForm(props: Props) {
               <Show when={props.data.mndaTermType !== 'fixed'}>
                 <span class="inline-placeholder">N</span>
               </Show>
-              year(s) from Effective Date
+              {' '}year(s) from Effective Date
             </label>
             <label class="radio-label">
               <input
@@ -113,7 +113,7 @@ export default function NdaForm(props: Props) {
               <Show when={props.data.confidentialityTermType !== 'fixed'}>
                 <span class="inline-placeholder">N</span>
               </Show>
-              year(s) from Effective Date + trade secrets
+              {' '}year(s) from Effective Date + trade secrets
             </label>
             <label class="radio-label">
               <input

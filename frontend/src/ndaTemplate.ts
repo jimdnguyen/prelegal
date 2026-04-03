@@ -140,8 +140,8 @@ function renderCoverPage(data: NdaFormData): string {
         </tr>
         <tr>
           <td>Title</td>
-          <td>${data.party1Title ? esc(data.party1Title) : '&nbsp;'}</td>
-          <td>${data.party2Title ? esc(data.party2Title) : '&nbsp;'}</td>
+          <td>${ph(data.party1Title, 'Title')}</td>
+          <td>${ph(data.party2Title, 'Title')}</td>
         </tr>
         <tr>
           <td>Company</td>
@@ -150,13 +150,13 @@ function renderCoverPage(data: NdaFormData): string {
         </tr>
         <tr>
           <td>Notice Address<br><small>Use either email or postal address</small></td>
-          <td>${data.party1NoticeAddress ? esc(data.party1NoticeAddress) : '&nbsp;'}</td>
-          <td>${data.party2NoticeAddress ? esc(data.party2NoticeAddress) : '&nbsp;'}</td>
+          <td>${ph(data.party1NoticeAddress, 'Email or postal address')}</td>
+          <td>${ph(data.party2NoticeAddress, 'Email or postal address')}</td>
         </tr>
         <tr>
           <td>Date</td>
-          <td>${data.party1Date ? formatDate(data.party1Date) : '&nbsp;'}</td>
-          <td>${data.party2Date ? formatDate(data.party2Date) : '&nbsp;'}</td>
+          <td>${datePh(data.party1Date, 'Signing Date')}</td>
+          <td>${datePh(data.party2Date, 'Signing Date')}</td>
         </tr>
       </tbody>
     </table>
@@ -173,8 +173,12 @@ function renderStandardTerms(data: NdaFormData): string {
   const effectiveDate = data.effectiveDate
     ? `<strong>${formatDate(data.effectiveDate)}</strong>`
     : '<span class="placeholder">[Effective Date]</span>';
-  const mndaTerm = `<strong>${getMndaTermText(data)}</strong>`;
-  const confTerm = `<strong>${getConfidentialityTermText(data)}</strong>`;
+  const mndaTermPhrase = data.mndaTermType === 'fixed'
+    ? `expires at the end of the <strong>${getMndaTermText(data)}</strong>`
+    : `<strong>${getMndaTermText(data)}</strong>`;
+  const confTermPhrase = data.confidentialityTermType === 'fixed'
+    ? `for the <strong>${getConfidentialityTermText(data)}</strong>`
+    : `<strong>${getConfidentialityTermText(data)}</strong>`;
   const gl = data.governingLaw.trim()
     ? `<strong>${esc(data.governingLaw)}</strong>`
     : '<span class="placeholder">[State]</span>';
@@ -194,7 +198,7 @@ function renderStandardTerms(data: NdaFormData): string {
 
   <p><strong>4. Disclosures Required by Law.</strong> The Receiving Party may disclose Confidential Information to the extent required by law, regulation or regulatory authority, subpoena or court order, provided (to the extent legally permitted) it provides the Disclosing Party reasonable advance notice of the required disclosure and reasonably cooperates, at the Disclosing Party&rsquo;s expense, with the Disclosing Party&rsquo;s efforts to obtain confidential treatment for the Confidential Information.</p>
 
-  <p><strong>5. Term and Termination.</strong> This MNDA commences on the ${effectiveDate} and expires at the end of the ${mndaTerm}. Either party may terminate this MNDA for any or no reason upon written notice to the other party. The Receiving Party&rsquo;s obligations relating to Confidential Information will survive for the ${confTerm}, despite any expiration or termination of this MNDA.</p>
+  <p><strong>5. Term and Termination.</strong> This MNDA commences on the ${effectiveDate} and ${mndaTermPhrase}. Either party may terminate this MNDA for any or no reason upon written notice to the other party. The Receiving Party&rsquo;s obligations relating to Confidential Information will survive ${confTermPhrase}, despite any expiration or termination of this MNDA.</p>
 
   <p><strong>6. Return or Destruction of Confidential Information.</strong> Upon expiration or termination of this MNDA or upon the Disclosing Party&rsquo;s earlier request, the Receiving Party will: (a) cease using Confidential Information; (b) promptly after the Disclosing Party&rsquo;s written request, destroy all Confidential Information in the Receiving Party&rsquo;s possession or control or return it to the Disclosing Party; and (c) if requested by the Disclosing Party, confirm its compliance with these obligations in writing. As an exception to subsection (b), the Receiving Party may retain Confidential Information in accordance with its standard backup or record retention policies or as required by law, but the terms of this MNDA will continue to apply to the retained Confidential Information.</p>
 
