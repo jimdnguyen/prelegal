@@ -18,7 +18,11 @@ When instructed to build a feature:
 
 ## AI Design
 
-When writing code to make calls to LLMs, use your Cerebras skill to use LiteLLM via OpenRouter to the openrouter/free with Cerebras as the inference provider. You should use Structured Outputs so that you can interpret the results and populate fields in the legal document.
+Use LiteLLM via OpenRouter with `openai/gpt-oss-120b:free` as the primary model, with fallback routing to other free models via `extra_body={"models": [...], "route": "fallback"}`. Do NOT use `openrouter/free` — it routes to a broken "Stealth" provider. Cerebras is no longer available on OpenRouter's free tier.
+
+Use `response_format={"type": "json_object"}` (not a Pydantic model) for structured outputs — passing a Pydantic model causes incompatible routing on the free tier. Instead, instruct the model via the system prompt to return JSON in the expected schema and parse with `model_validate_json`.
+
+The chat endpoint is `POST /api/assist` (not `/api/chat` — that path is blocked by ad blockers).
 
 ## Technical Design
 
@@ -52,7 +56,7 @@ Backend available at http://localhost:8000
 - **Scripts**: `scripts/start-{mac,linux}.sh`, `scripts/stop-{mac,linux}.sh`, `scripts/start-windows.ps1`, `scripts/stop-windows.ps1`.
 
 ### Completed (PRE-9)
-- **Backend**: `POST /api/chat` endpoint in `backend/routes/chat.py`. LiteLLM integration in `backend/llm.py` using `openrouter/free` + Cerebras structured outputs. Pydantic request/response models in `backend/models.py`.
+- **Backend**: `POST /api/assist` endpoint in `backend/routes/chat.py`. LiteLLM integration in `backend/llm.py` using `openai/gpt-oss-120b:free` via OpenRouter with free-model fallback routing. Pydantic request/response models in `backend/models.py` (`field_updates` defaults to `[]`).
 - **Frontend**: `Chat.tsx` replaces `NdaForm.tsx` — freeform AI chat populates `formData` signal; `NdaPreview.tsx` and `ndaTemplate.ts` unchanged.
 
 ### Completed (PRE-10)
