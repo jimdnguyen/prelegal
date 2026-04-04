@@ -78,3 +78,14 @@ export interface CatalogEntry {
   description: string;
   filename: string;
 }
+
+export interface SavedDocumentSummary {
+  id: number;
+  document_type: string;
+  title: string;
+  created_at: string;
+}
+
+export interface SavedDocument extends SavedDocumentSummary {
+  form_data: DocumentFormData;
+}

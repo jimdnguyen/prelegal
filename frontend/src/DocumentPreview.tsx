@@ -1,11 +1,13 @@
 import { createMemo, createResource, createSignal } from 'solid-js';
 import { marked } from 'marked';
 import type { DocumentFormData } from './types';
+import { useAuth } from './AuthContext';
 import html2pdf from 'html2pdf.js';
 
 interface Props {
   documentType: string;
   data: DocumentFormData;
+  savedDocId?: number | null;
 }
 
 function escHtml(s: string): string {
@@ -20,11 +22,9 @@ function fillTemplate(template: string, data: DocumentFormData): string {
   return template.replace(
     /<span class="(?:orderform|keyterms|coverpage)_link">([^<]+)<\/span>/g,
     (_match, fieldName: string) => {
-      // Try exact match first
       let value = data[fieldName];
       let suffix = '';
 
-      // Handle possessives: "Customer's" → look up "Customer" and append "'s"
       if (!value || !value.trim()) {
         const possessive = fieldName.match(/^(.+)['\u2019]s$/);
         if (possessive) {
@@ -45,7 +45,9 @@ function fillTemplate(template: string, data: DocumentFormData): string {
 }
 
 export default function DocumentPreview(props: Props) {
+  const { auth } = useAuth();
   const [downloading, setDownloading] = createSignal(false);
+  const [saveState, setSaveState] = createSignal<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
   const [rawTemplate] = createResource(
     () => props.documentType,
@@ -59,7 +61,7 @@ export default function DocumentPreview(props: Props) {
 
   const html = createMemo(() => {
     const template = rawTemplate();
-    if (!template) return '<p>Loading document…</p>';
+    if (!template) return '<p style="color:#888;padding:2rem">Loading document…</p>';
     const filled = fillTemplate(template, props.data);
     return marked.parse(filled) as string;
   });
@@ -81,11 +83,51 @@ export default function DocumentPreview(props: Props) {
     setDownloading(false);
   }
 
+  async function saveDocument() {
+    const token = auth().token;
+    if (!token) return;
+    setSaveState('saving');
+    const date = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const title = `${props.documentType} — ${date}`;
+    try {
+      const res = await fetch('/api/documents', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ document_type: props.documentType, title, form_data: props.data }),
+      });
+      if (!res.ok) throw new Error();
+      setSaveState('saved');
+    } catch {
+      setSaveState('error');
+      setTimeout(() => setSaveState('idle'), 3000);
+    }
+  }
+
+  const saveLabel = () => {
+    if (saveState() === 'saving') return 'Saving…';
+    if (saveState() === 'saved') return '✓ Saved';
+    if (saveState() === 'error') return 'Save failed';
+    return props.savedDocId ? 'Save New Copy' : 'Save Document';
+  };
+
   return (
     <div class="preview-panel">
+      <div class="disclaimer-banner">
+        ⚠️ This document is a draft generated with AI assistance. It should be reviewed by a qualified legal professional before use.
+      </div>
+
       <div class="preview-toolbar">
         <span class="preview-label">Live Preview</span>
         <div class="preview-actions">
+          {auth().token && (
+            <button
+              class={`btn btn-save ${saveState()}`}
+              onClick={saveDocument}
+              disabled={saveState() === 'saving' || saveState() === 'saved'}
+            >
+              {saveLabel()}
+            </button>
+          )}
           <button
             class="btn btn-primary"
             onClick={downloadPdf}

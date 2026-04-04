@@ -1,3 +1,4 @@
+import db_models  # noqa: F401 — registers table metadata with SQLModel
 from sqlmodel import SQLModel, create_engine, Session
 
 DATABASE_URL = "sqlite:///./prelegal.db"

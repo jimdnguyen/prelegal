@@ -7,7 +7,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from database import create_db
-from routes import chat, health, templates
+from routes import auth, chat, documents, health, templates
 
 load_dotenv(Path(__file__).parent.parent / ".env")
 
@@ -23,7 +23,9 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 app.include_router(health.router, prefix="/api")
+app.include_router(auth.router, prefix="/api")
 app.include_router(chat.router, prefix="/api")
+app.include_router(documents.router, prefix="/api")
 app.include_router(templates.router, prefix="/api")
 
 if DIST_DIR.exists():
