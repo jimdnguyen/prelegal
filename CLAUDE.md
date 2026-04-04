@@ -63,9 +63,10 @@ Backend available at http://localhost:8000
 - **Backend**: `backend/documents.py` — catalog loader, template field extractor (possessive-aware), dynamic per-document system prompt builder. `GET /api/catalog` and `GET /api/templates/{document_type}` endpoints in `backend/routes/templates.py`. Generalized `ChatRequest`/`ChatResponse` to use `list[FieldUpdate]` (`{key, value}` pairs) instead of typed NDA fields.
 - **Frontend**: `DocumentSelector.tsx` — grid of all 12 document types from `/api/catalog`. `DocumentPreview.tsx` — generic template renderer (span field substitution + `marked` for markdown→HTML + PDF download). `App.tsx` updated with document-selection flow. `Chat.tsx` and `NdaPreview.tsx` generalized to use `DocumentFormData = Record<string, string>`.
 
-### Not yet implemented
-- Real authentication
-- Any database tables (infrastructure only — no models yet)
+### Completed (PRE-11)
+- **Backend**: `backend/auth.py` — JWT creation/verification (`python-jose`) + bcrypt password hashing (direct, no passlib). `backend/db_models.py` — `User` and `GeneratedDocument` SQLModel tables (ephemeral, reset on container restart). `backend/routes/auth.py` — `POST /api/auth/register` and `POST /api/auth/login`. `backend/routes/documents.py` — `POST /api/documents` (save), `GET /api/documents` (list), `GET /api/documents/{id}` (retrieve), all gated by Bearer JWT. Document type validated against catalog on save.
+- **Frontend**: `AuthContext.tsx` — JWT + user info in localStorage, shared via Solid context (`useAuth()`). `Login.tsx` — Sign In / Create Account tabs. `History.tsx` — saved document list with open/resume. Route guards on `/app` and `/history`. Auto-logout on 401. Disclaimer banner on all generated documents. "My Documents" nav, user email display, Sign Out button.
+- **Tests**: `backend/test_auth_documents.py` — 10 integration tests using in-memory SQLite (`StaticPool`) via `dependency_overrides`. `backend/conftest.py` sets up the test DB fixture.
 
 ## Docker & Environment Notes
 - `.env` is injected via `env_file` in `docker-compose.yml` — it is NOT copied into the image.
