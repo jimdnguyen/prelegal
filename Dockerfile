@@ -8,7 +8,7 @@ RUN npm run build
 
 # Stage 2: FastAPI backend + static frontend
 FROM python:3.13-slim
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
+RUN pip install uv --no-cache-dir
 
 WORKDIR /app
 
