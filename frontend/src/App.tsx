@@ -1,15 +1,25 @@
-import { createSignal } from 'solid-js';
+import { createSignal, Show } from 'solid-js';
 import Chat from './Chat';
 import NdaPreview from './NdaPreview';
-import { defaultFormData } from './types';
-import type { NdaFormData } from './types';
+import DocumentPreview from './DocumentPreview';
+import DocumentSelector from './DocumentSelector';
+import type { DocumentFormData } from './types';
 
 export default function App() {
-  const [formData, setFormData] = createSignal(defaultFormData);
+  const [documentType, setDocumentType] = createSignal<string | null>(null);
+  const [formData, setFormData] = createSignal<DocumentFormData>({});
 
-  function applyFieldUpdates(updates: Partial<NdaFormData>) {
+  function selectDocument(docType: string) {
+    setDocumentType(docType);
+    setFormData({});
+  }
+
+  function applyFieldUpdates(updates: DocumentFormData) {
     setFormData(prev => ({ ...prev, ...updates }));
   }
+
+  const isNda = () => documentType() === 'Mutual Non-Disclosure Agreement';
+  const docName = () => documentType() ?? '';
 
   return (
     <div class="app">
@@ -19,24 +29,42 @@ export default function App() {
             <span class="brand-icon">⚖️</span>
             <div>
               <h1>Prelegal</h1>
-              <p>Mutual NDA Creator</p>
+              <p>{documentType() ?? 'Legal Document Creator'}</p>
             </div>
           </div>
           <div class="header-meta">
-            <span class="badge">AI Chat</span>
-            <span class="header-hint">Chat with the AI to fill in your Mutual NDA</span>
+            <Show when={documentType()}>
+              <span class="badge">AI Chat</span>
+              <button class="btn-change-doc" onClick={() => { setDocumentType(null); setFormData({}); }}>
+                Change Document
+              </button>
+            </Show>
           </div>
         </div>
       </header>
 
-      <main class="app-main">
-        <aside class="form-pane">
-          <Chat onFieldUpdates={applyFieldUpdates} />
-        </aside>
-        <section class="preview-pane">
-          <NdaPreview data={formData()} />
-        </section>
-      </main>
+      <Show
+        when={documentType()}
+        fallback={
+          <main class="selector-main">
+            <DocumentSelector onSelect={selectDocument} />
+          </main>
+        }
+      >
+        <main class="app-main">
+          <aside class="form-pane">
+            <Chat documentType={docName()} onFieldUpdates={applyFieldUpdates} />
+          </aside>
+          <section class="preview-pane">
+            <Show
+              when={isNda()}
+              fallback={<DocumentPreview documentType={docName()} data={formData()} />}
+            >
+              <NdaPreview data={formData()} />
+            </Show>
+          </section>
+        </main>
+      </Show>
     </div>
   );
 }

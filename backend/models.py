@@ -1,6 +1,5 @@
 """Pydantic models for API request/response schemas."""
-from typing import Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class ChatMessage(BaseModel):
@@ -8,33 +7,17 @@ class ChatMessage(BaseModel):
     content: str
 
 
-class NdaFieldUpdates(BaseModel):
-    """Partial NDA form fields extracted from the conversation."""
-    purpose: Optional[str] = None
-    effectiveDate: Optional[str] = None
-    mndaTermType: Optional[str] = None  # "fixed" | "perpetual"
-    mndaTermYears: Optional[int] = Field(None, ge=1, le=99)
-    confidentialityTermType: Optional[str] = None  # "fixed" | "perpetual"
-    confidentialityTermYears: Optional[int] = Field(None, ge=1, le=99)
-    governingLaw: Optional[str] = None
-    jurisdiction: Optional[str] = None
-    modifications: Optional[str] = None
-    party1Name: Optional[str] = None
-    party1Title: Optional[str] = None
-    party1Company: Optional[str] = None
-    party1NoticeAddress: Optional[str] = None
-    party1Date: Optional[str] = None
-    party2Name: Optional[str] = None
-    party2Title: Optional[str] = None
-    party2Company: Optional[str] = None
-    party2NoticeAddress: Optional[str] = None
-    party2Date: Optional[str] = None
+class FieldUpdate(BaseModel):
+    """A single extracted document field."""
+    key: str
+    value: str
 
 
 class ChatRequest(BaseModel):
     messages: list[ChatMessage]
+    document_type: str = "Mutual Non-Disclosure Agreement"
 
 
 class ChatResponse(BaseModel):
     message: str
-    field_updates: NdaFieldUpdates
+    field_updates: list[FieldUpdate]
