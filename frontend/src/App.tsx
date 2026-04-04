@@ -1,10 +1,15 @@
 import { createSignal } from 'solid-js';
-import NdaForm from './NdaForm';
+import Chat from './Chat';
 import NdaPreview from './NdaPreview';
 import { defaultFormData } from './types';
+import type { NdaFormData } from './types';
 
 export default function App() {
   const [formData, setFormData] = createSignal(defaultFormData);
+
+  function applyFieldUpdates(updates: Partial<NdaFormData>) {
+    setFormData(prev => ({ ...prev, ...updates }));
+  }
 
   return (
     <div class="app">
@@ -18,15 +23,15 @@ export default function App() {
             </div>
           </div>
           <div class="header-meta">
-            <span class="badge">Prototype</span>
-            <span class="header-hint">Fill in the form to generate your Mutual NDA</span>
+            <span class="badge">AI Chat</span>
+            <span class="header-hint">Chat with the AI to fill in your Mutual NDA</span>
           </div>
         </div>
       </header>
 
       <main class="app-main">
         <aside class="form-pane">
-          <NdaForm data={formData()} setData={setFormData} />
+          <Chat onFieldUpdates={applyFieldUpdates} />
         </aside>
         <section class="preview-pane">
           <NdaPreview data={formData()} />
