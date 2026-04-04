@@ -49,6 +49,9 @@ package-lock.json
 .DS_Store
 Thumbs.db
 
+# SQLite
+*.db
+
 # Misc
 *.bak
 *.tmp

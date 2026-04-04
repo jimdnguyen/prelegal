@@ -24,11 +24,11 @@ body {
 }
 
 .app-header {
-  background: #1e3a5f;
+  background: #032147;
   color: #fff;
   padding: 0 24px;
   flex-shrink: 0;
-  border-bottom: 3px solid #2563eb;
+  border-bottom: 3px solid #209dd7;
 }
 
 .header-content {
@@ -71,7 +71,7 @@ body {
 }
 
 .badge {
-  background: #2563eb;
+  background: #209dd7;
   color: #fff;
   font-size: 11px;
   font-weight: 600;
@@ -117,7 +117,7 @@ body {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  color: #1e3a5f;
+  color: #032147;
   padding-bottom: 10px;
   border-bottom: 2px solid #e2e8f0;
   margin-bottom: 20px;
@@ -169,7 +169,7 @@ input[type="date"]:focus,
 input[type="number"]:focus,
 textarea:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: #209dd7;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
@@ -199,7 +199,7 @@ textarea {
 .radio-label input[type="radio"] {
   width: auto;
   margin: 0;
-  accent-color: #2563eb;
+  accent-color: #209dd7;
   cursor: pointer;
 }
 
@@ -265,9 +265,9 @@ textarea {
 }
 
 .btn-primary {
-  background: #2563eb;
+  background: #209dd7;
   color: #fff;
-  border-color: #2563eb;
+  border-color: #209dd7;
 }
 
 .btn-primary:hover {
@@ -287,7 +287,7 @@ textarea {
 }
 
 .btn:focus-visible {
-  outline: 2px solid #2563eb;
+  outline: 2px solid #209dd7;
   outline-offset: 2px;
 }
 
@@ -515,6 +515,61 @@ textarea {
   .document-paper {
     padding: 32px 24px;
   }
+}
+
+/* ── Login Page ────────────────────────────────── */
+.login-page {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #032147;
+}
+
+.login-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
+}
+
+.login-logo {
+  margin-bottom: 36px;
+}
+
+.login-icon {
+  font-size: 48px;
+  line-height: 1;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.login-logo h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #032147;
+  margin-bottom: 6px;
+}
+
+.login-logo p {
+  font-size: 14px;
+  color: #888888;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  background: #753991;
+  border-color: #753991;
+}
+
+.login-btn:hover {
+  background: #5e2c75;
+  border-color: #5e2c75;
 }
 
 @media print {
