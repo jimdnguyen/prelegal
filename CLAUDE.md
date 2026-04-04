@@ -8,8 +8,6 @@ The available documents are covered in the catalog.json file in the project root
 
 @catalog.json
 
-Before we start: the initial implementation is a frontend-only prototype that only supports the Mutual NDA document with no AI chat.
-
 ## Development process
 
 When instructed to build a feature:
@@ -28,7 +26,7 @@ The entire project should be packaged into a Docker container.
 The backend should be in backend/ and be a uv project, using FastAPI.  
 The frontend should be in frontend/  
 The database should use SQLLite and be created from scratch each time the Docker container is brought up  
-Consider statically building the frontend and serving it via FastAPI, if that will work.  
+The frontend is statically built and served via FastAPI (`/app/dist/`).  
 There should be scripts in scripts/ for:  
 ```bash
 # Mac
@@ -44,6 +42,20 @@ scripts/start-windows.ps1
 scripts/stop-windows.ps1
 ```
 Backend available at http://localhost:8000
+
+## Implementation Status
+
+### Completed (PRE-8)
+- **Backend**: FastAPI uv project (`backend/`). Routes in `backend/routes/`, DB setup in `backend/database.py`, models in `backend/models.py`. `GET /api/health` endpoint live.
+- **Frontend**: SolidJS + `@solidjs/router`. Routes: `/` → Login ("Continue as Guest"), `/app` → Mutual NDA creator. Color scheme updated to match spec.
+- **Docker**: Multi-stage Dockerfile (Node 22 build → Python 3.13 serve). `docker compose up --build` starts everything on port 8000.
+- **Scripts**: `scripts/start-{mac,linux}.sh`, `scripts/stop-{mac,linux}.sh`, `scripts/start-windows.ps1`, `scripts/stop-windows.ps1`.
+
+### Not yet implemented
+- AI chat / LLM integration
+- Additional document templates beyond Mutual NDA
+- Real authentication
+- Any database tables (infrastructure only — no models yet)
 
 ## Color Scheme
 - Accent Yellow: `#ecad0a`
