@@ -1,7 +1,18 @@
 import { render } from 'solid-js/web';
+import { Router, Route } from '@solidjs/router';
+import Login from './Login';
 import App from './App';
 import './index.css';
 
 const root = document.getElementById('root');
 if (!root) throw new Error('Root element not found');
-render(() => <App />, root);
+
+render(
+  () => (
+    <Router>
+      <Route path="/" component={Login} />
+      <Route path="/app" component={App} />
+    </Router>
+  ),
+  root,
+);
