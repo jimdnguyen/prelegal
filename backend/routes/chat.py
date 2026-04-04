@@ -6,7 +6,7 @@ from models import ChatRequest, ChatResponse
 router = APIRouter()
 
 
-@router.post("/chat", response_model=ChatResponse)
+@router.post("/assist", response_model=ChatResponse)
 def chat_endpoint(request: ChatRequest) -> ChatResponse:
     """Process a chat message and return AI response with any extracted document fields."""
     try:

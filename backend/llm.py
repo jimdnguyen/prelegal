@@ -12,10 +12,17 @@ def chat(messages: list[ChatMessage], document_type: str) -> ChatResponse:
     llm_messages += [{"role": m.role, "content": m.content} for m in messages]
 
     call_kwargs = {
-        "model": "openrouter/free",
+        "model": "openrouter/openai/gpt-oss-120b:free",
         "messages": llm_messages,
-        "extra_body": {"provider": {"order": ["cerebras"]}},
-        "response_format": ChatResponse,
+        "response_format": {"type": "json_object"},
+        "extra_body": {
+            "models": [
+                "openai/gpt-oss-120b:free",
+                "qwen/qwen3.6-plus:free",
+                "nvidia/nemotron-3-super-120b-a12b:free",
+            ],
+            "route": "fallback",
+        },
     }
 
     response = completion(**call_kwargs)

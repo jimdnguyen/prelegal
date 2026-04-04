@@ -3,7 +3,8 @@ import json
 import re
 from pathlib import Path
 
-_ROOT = Path(__file__).parent.parent
+_SELF = Path(__file__).parent
+_ROOT = _SELF if (_SELF / "catalog.json").exists() else _SELF.parent
 CATALOG_PATH = _ROOT / "catalog.json"
 TEMPLATES_PATH = _ROOT / "templates"
 
@@ -55,6 +56,9 @@ The NDA has these fields you need to collect (use these EXACT key names):
 - party1Name, party1Title, party1Company, party1NoticeAddress, party1Date: First party's details
 - party2Name, party2Title, party2Company, party2NoticeAddress, party2Date: Second party's details
 
+IMPORTANT: Always respond with a JSON object in exactly this format:
+{"message": "your conversational reply here", "field_updates": [{"key": "fieldname", "value": "fieldvalue"}]}
+
 Guidelines:
 - Start by warmly greeting the user and asking what the NDA is for (purpose) and who the two parties are.
 - As you learn information, include it in field_updates as a list of {key, value} objects.
@@ -84,6 +88,9 @@ We support these document types:
 
 The user asked for a document we don't support. Explain kindly that we can't generate that document, suggest the closest supported document, and ask if they'd like to proceed with the alternative.
 
+Always respond with a JSON object in exactly this format:
+{"message": "your conversational reply here", "field_updates": []}
+
 Return field_updates as an empty list [] until the user confirms a supported document type."""
 
     template = get_template_content(doc_info["filename"])
@@ -99,6 +106,9 @@ Your job is to have a friendly, conversational chat to collect the information n
 
 The document has these fields you need to collect. Use these EXACT key names in field_updates:
 {field_list}
+
+IMPORTANT: Always respond with a JSON object in exactly this format:
+{{"message": "your conversational reply here", "field_updates": [{{"key": "fieldname", "value": "fieldvalue"}}]}}
 
 Guidelines:
 - Start by warmly greeting the user and asking about the key parties involved.

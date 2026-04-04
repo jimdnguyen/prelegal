@@ -20,4 +20,4 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     message: str
-    field_updates: list[FieldUpdate]
+    field_updates: list[FieldUpdate] = []

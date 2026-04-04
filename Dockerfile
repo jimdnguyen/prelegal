@@ -19,6 +19,10 @@ RUN uv sync --frozen --no-dev
 # Copy backend source
 COPY backend/ ./
 
+# Copy catalog and templates (needed by documents.py)
+COPY catalog.json ./
+COPY templates/ ./templates/
+
 # Copy built frontend
 COPY --from=frontend-build /app/dist ./dist
 
