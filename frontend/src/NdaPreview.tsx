@@ -1,21 +1,16 @@
 import type { NdaFormData } from './types';
-import { createMemo } from 'solid-js';
-import { generateNdaHtml, generateStandaloneHtml } from './ndaTemplate';
+import { createMemo, createSignal } from 'solid-js';
+import { generateNdaHtml } from './ndaTemplate';
+import html2pdf from 'html2pdf.js';
 
 interface Props {
   data: NdaFormData;
 }
 
-function createBlobUrl(data: NdaFormData): string {
-  const content = generateStandaloneHtml(data);
-  const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
-  return URL.createObjectURL(blob);
-}
-
 function buildFilename(data: NdaFormData): string {
   const p1 = data.party1Company || 'Party1';
   const p2 = data.party2Company || 'Party2';
-  return `mutual-nda-${p1}-${p2}.html`
+  return `mutual-nda-${p1}-${p2}.pdf`
     .toLowerCase()
     .replace(/[^a-z0-9._-]/g, '-')
     .replace(/-+/g, '-');
@@ -23,29 +18,22 @@ function buildFilename(data: NdaFormData): string {
 
 export default function NdaPreview(props: Props) {
   const html = createMemo(() => generateNdaHtml(props.data));
+  const [downloading, setDownloading] = createSignal(false);
 
-  function downloadHtml() {
-    const url = createBlobUrl(props.data);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = buildFilename(props.data);
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
-
-  function printDocument() {
-    const url = createBlobUrl(props.data);
-    const win = window.open(url, '_blank');
-    if (!win) {
-      URL.revokeObjectURL(url);
-      return;
-    }
-    win.addEventListener('load', () => {
-      win.print();
-      URL.revokeObjectURL(url);
-    });
+  async function downloadPdf() {
+    setDownloading(true);
+    const element = document.querySelector('.document-paper') as HTMLElement;
+    await html2pdf()
+      .from(element)
+      .set({
+        filename: buildFilename(props.data),
+        margin: [10, 10, 10, 10],
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' },
+      })
+      .save();
+    setDownloading(false);
   }
 
   return (
@@ -53,11 +41,8 @@ export default function NdaPreview(props: Props) {
       <div class="preview-toolbar">
         <span class="preview-label">Live Preview</span>
         <div class="preview-actions">
-          <button class="btn btn-secondary" onClick={printDocument} title="Open in new tab and print (save as PDF)">
-            Print / Save PDF
-          </button>
-          <button class="btn btn-primary" onClick={downloadHtml} title="Download as HTML file">
-            Download HTML
+          <button class="btn btn-primary" onClick={downloadPdf} disabled={downloading()} title="Download as PDF">
+            {downloading() ? 'Generating…' : 'Download PDF'}
           </button>
         </div>
       </div>

@@ -10,6 +10,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "html2pdf.js": "^0.14.0",
     "solid-js": "^1.9.3"
   },
   "devDependencies": {
