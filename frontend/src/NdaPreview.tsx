@@ -1,24 +1,25 @@
-import type { NdaFormData } from './types';
 import { createMemo, createSignal } from 'solid-js';
 import { generateNdaHtml } from './ndaTemplate';
+import { toNdaFormData } from './types';
+import type { DocumentFormData } from './types';
 import html2pdf from 'html2pdf.js';
 
 interface Props {
-  data: NdaFormData;
-}
-
-function buildFilename(data: NdaFormData): string {
-  const p1 = data.party1Company || 'Party1';
-  const p2 = data.party2Company || 'Party2';
-  return `mutual-nda-${p1}-${p2}.pdf`
-    .toLowerCase()
-    .replace(/[^a-z0-9._-]/g, '-')
-    .replace(/-+/g, '-');
+  data: DocumentFormData;
 }
 
 export default function NdaPreview(props: Props) {
-  const html = createMemo(() => generateNdaHtml(props.data));
+  const html = createMemo(() => generateNdaHtml(toNdaFormData(props.data)));
   const [downloading, setDownloading] = createSignal(false);
+
+  function buildFilename(): string {
+    const p1 = props.data['party1Company'] || 'Party1';
+    const p2 = props.data['party2Company'] || 'Party2';
+    return `mutual-nda-${p1}-${p2}.pdf`
+      .toLowerCase()
+      .replace(/[^a-z0-9._-]/g, '-')
+      .replace(/-+/g, '-');
+  }
 
   async function downloadPdf() {
     setDownloading(true);
@@ -26,7 +27,7 @@ export default function NdaPreview(props: Props) {
     await html2pdf()
       .from(element)
       .set({
-        filename: buildFilename(props.data),
+        filename: buildFilename(),
         margin: [10, 10, 10, 10],
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true },

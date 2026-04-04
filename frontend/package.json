@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "@solidjs/router": "^0.16.1",
+    "@types/marked": "^5.0.2",
     "html2pdf.js": "^0.14.0",
+    "marked": "^17.0.5",
     "solid-js": "^1.9.3"
   },
   "devDependencies": {

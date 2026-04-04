@@ -708,6 +708,154 @@ textarea {
   border-color: #5e2c75;
 }
 
+/* ── Document Selector ─────────────────────────── */
+.selector-main {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 24px;
+  background: #f0f4f8;
+}
+
+.doc-selector {
+  width: 100%;
+  max-width: 960px;
+}
+
+.doc-selector-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.doc-selector-header h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #032147;
+  margin-bottom: 8px;
+}
+
+.doc-selector-header p {
+  font-size: 14px;
+  color: #888888;
+}
+
+.doc-selector-loading {
+  text-align: center;
+  color: #888;
+  padding: 40px;
+}
+
+.doc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.doc-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+  font-family: inherit;
+}
+
+.doc-card:hover {
+  border-color: #209dd7;
+  box-shadow: 0 4px 16px rgba(32, 157, 215, 0.15);
+  transform: translateY(-2px);
+}
+
+.doc-card-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #032147;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.doc-card-desc {
+  font-size: 12px;
+  color: #888888;
+  line-height: 1.5;
+}
+
+/* ── Change Document Button ────────────────────── */
+.btn-change-doc {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #93c5fd;
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-change-doc:hover {
+  border-color: #fff;
+  color: #fff;
+}
+
+/* ── Generic Document Preview ──────────────────── */
+.document-generic {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #1a202c;
+}
+
+.document-generic h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #032147;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.document-generic h2 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #032147;
+  margin: 20px 0 8px;
+}
+
+.document-generic h3 {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 14px 0 6px;
+}
+
+.document-generic ol,
+.document-generic ul {
+  padding-left: 24px;
+  margin-bottom: 12px;
+}
+
+.document-generic li {
+  margin-bottom: 6px;
+}
+
+.document-generic p {
+  margin-bottom: 10px;
+}
+
+.document-generic strong {
+  font-weight: 600;
+  color: #032147;
+}
+
+.document-generic a {
+  color: #209dd7;
+  text-decoration: underline;
+}
+
 @media print {
   .app-header,
   .form-pane,

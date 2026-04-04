@@ -1,23 +1,25 @@
 import { createSignal, createEffect, For } from 'solid-js';
-import type { NdaFormData } from './types';
+import type { DocumentFormData } from './types';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
 
-const INITIAL_MESSAGE: Message = {
-  role: 'assistant',
-  content:
-    "Hello! I'm your AI legal assistant. I'll help you create a Mutual NDA. Let's start — what is the purpose of this agreement? For example: \"Evaluating whether to enter into a business partnership.\"",
-};
-
 interface Props {
-  onFieldUpdates: (updates: Partial<NdaFormData>) => void;
+  documentType: string;
+  onFieldUpdates: (updates: DocumentFormData) => void;
+}
+
+function initialMessage(docType: string): Message {
+  return {
+    role: 'assistant',
+    content: `Hello! I'm your AI legal assistant. I'll help you create a ${docType}. Let's get started — who are the parties involved in this agreement?`,
+  };
 }
 
 export default function Chat(props: Props) {
-  const [messages, setMessages] = createSignal<Message[]>([INITIAL_MESSAGE]);
+  const [messages, setMessages] = createSignal<Message[]>([initialMessage(props.documentType)]);
   const [input, setInput] = createSignal('');
   const [loading, setLoading] = createSignal(false);
   let scrollRef: HTMLDivElement | undefined;
@@ -41,7 +43,7 @@ export default function Chat(props: Props) {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: updatedMessages }),
+        body: JSON.stringify({ messages: updatedMessages, document_type: props.documentType }),
       });
 
       if (!res.ok) {
@@ -53,12 +55,16 @@ export default function Chat(props: Props) {
       const data = await res.json();
       setMessages(prev => [...prev, { role: 'assistant', content: data.message }]);
 
-      // Apply non-null field updates to the document
-      const updates = data.field_updates as Record<string, unknown>;
-      const filtered = Object.fromEntries(
-        Object.entries(updates).filter(([, v]) => v !== null && v !== undefined)
-      ) as Partial<NdaFormData>;
-      if (Object.keys(filtered).length > 0) props.onFieldUpdates(filtered);
+      // Convert list of {key, value} pairs to a partial update object
+      if (Array.isArray(data.field_updates) && data.field_updates.length > 0) {
+        const updates: DocumentFormData = {};
+        for (const { key, value } of data.field_updates) {
+          if (key && value !== null && value !== undefined && value !== '') {
+            updates[key] = String(value);
+          }
+        }
+        if (Object.keys(updates).length > 0) props.onFieldUpdates(updates);
+      }
     } catch (err) {
       console.error('Chat failed:', err);
       setMessages(prev => [
