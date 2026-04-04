@@ -55,8 +55,11 @@ Backend available at http://localhost:8000
 - **Backend**: `POST /api/chat` endpoint in `backend/routes/chat.py`. LiteLLM integration in `backend/llm.py` using `openrouter/free` + Cerebras structured outputs. Pydantic request/response models in `backend/models.py`.
 - **Frontend**: `Chat.tsx` replaces `NdaForm.tsx` — freeform AI chat populates `formData` signal; `NdaPreview.tsx` and `ndaTemplate.ts` unchanged.
 
+### Completed (PRE-10)
+- **Backend**: `backend/documents.py` — catalog loader, template field extractor (possessive-aware), dynamic per-document system prompt builder. `GET /api/catalog` and `GET /api/templates/{document_type}` endpoints in `backend/routes/templates.py`. Generalized `ChatRequest`/`ChatResponse` to use `list[FieldUpdate]` (`{key, value}` pairs) instead of typed NDA fields.
+- **Frontend**: `DocumentSelector.tsx` — grid of all 12 document types from `/api/catalog`. `DocumentPreview.tsx` — generic template renderer (span field substitution + `marked` for markdown→HTML + PDF download). `App.tsx` updated with document-selection flow. `Chat.tsx` and `NdaPreview.tsx` generalized to use `DocumentFormData = Record<string, string>`.
+
 ### Not yet implemented
-- Additional document templates beyond Mutual NDA
 - Real authentication
 - Any database tables (infrastructure only — no models yet)
 
