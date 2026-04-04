@@ -51,11 +51,19 @@ Backend available at http://localhost:8000
 - **Docker**: Multi-stage Dockerfile (Node 22 build → Python 3.13 serve). `docker compose up --build` starts everything on port 8000.
 - **Scripts**: `scripts/start-{mac,linux}.sh`, `scripts/stop-{mac,linux}.sh`, `scripts/start-windows.ps1`, `scripts/stop-windows.ps1`.
 
+### Completed (PRE-9)
+- **Backend**: `POST /api/chat` endpoint in `backend/routes/chat.py`. LiteLLM integration in `backend/llm.py` using `openrouter/free` + Cerebras structured outputs. Pydantic request/response models in `backend/models.py`.
+- **Frontend**: `Chat.tsx` replaces `NdaForm.tsx` — freeform AI chat populates `formData` signal; `NdaPreview.tsx` and `ndaTemplate.ts` unchanged.
+
 ### Not yet implemented
-- AI chat / LLM integration
 - Additional document templates beyond Mutual NDA
 - Real authentication
 - Any database tables (infrastructure only — no models yet)
+
+## Docker & Environment Notes
+- `.env` is injected via `env_file` in `docker-compose.yml` — it is NOT copied into the image.
+- Always `docker compose down` before `docker compose up --build`.
+- Inside the container, use `docker exec $(docker ps -q) uv run python` — plain `python` bypasses the uv venv.
 
 ## Color Scheme
 - Accent Yellow: `#ecad0a`
