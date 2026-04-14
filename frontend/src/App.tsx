@@ -1,4 +1,4 @@
-import { createSignal, Show } from 'solid-js';
+import { createSignal, createEffect, Show } from 'solid-js';
 import { useNavigate, useLocation } from '@solidjs/router';
 import Chat from './Chat';
 import NdaPreview from './NdaPreview';
@@ -8,12 +8,12 @@ import { useAuth } from './AuthContext';
 import type { DocumentFormData, SavedDocument } from './types';
 
 export default function App() {
-  const { auth, logout } = useAuth();
+  const { auth, login, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation<{ resumeDoc?: SavedDocument }>();
 
-  // Route guard — redirect unauthenticated users to login
-  if (!auth().token) {
+  // Route guard — allow authenticated users and guests, redirect others
+  if (!auth().token && !auth().isGuest) {
     navigate('/', { replace: true });
     return null;
   }
@@ -33,6 +33,35 @@ export default function App() {
   function applyFieldUpdates(updates: DocumentFormData) {
     setFormData(prev => ({ ...prev, ...updates }));
   }
+
+  // Persist guest formData to localStorage
+  createEffect(() => {
+    if (auth().isGuest && documentType()) {
+      const data = formData();
+      if (Object.keys(data).length > 0) {
+        localStorage.setItem('prelegal_guest_form', JSON.stringify({
+          documentType: documentType(),
+          formData: data,
+        }));
+      }
+    }
+  });
+
+  // Load guest formData from localStorage on mount
+  createEffect(() => {
+    if (auth().isGuest && !resume) {
+      try {
+        const stored = localStorage.getItem('prelegal_guest_form');
+        if (stored) {
+          const { documentType: savedType, formData: savedData } = JSON.parse(stored);
+          if (savedType && savedData && !documentType()) {
+            setDocumentType(savedType);
+            setFormData(savedData);
+          }
+        }
+      } catch {}
+    }
+  });
 
   function handleLogout() {
     logout();
@@ -60,11 +89,21 @@ export default function App() {
                 Change Document
               </button>
             </Show>
-            <button class="btn-nav" onClick={() => navigate('/history')}>My Documents</button>
-            <Show when={auth().user}>
-              <span class="header-user">{auth().user!.email}</span>
+            <Show when={!auth().isGuest}>
+              <button class="btn-nav" onClick={() => navigate('/history')}>My Documents</button>
             </Show>
-            <button class="btn-logout" onClick={handleLogout}>Sign Out</button>
+            <Show
+              when={auth().user}
+              fallback={
+                <Show when={auth().isGuest}>
+                  <span class="header-user guest-badge">Guest</span>
+                  <button class="btn-nav" onClick={() => navigate('/')}>Sign Up</button>
+                </Show>
+              }
+            >
+              <span class="header-user">{auth().user!.email}</span>
+              <button class="btn-logout" onClick={handleLogout}>Sign Out</button>
+            </Show>
           </div>
         </div>
       </header>

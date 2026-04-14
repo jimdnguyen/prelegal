@@ -1,7 +1,8 @@
-import { createMemo, createResource, createSignal } from 'solid-js';
+import { createMemo, createResource, createSignal, Show } from 'solid-js';
 import { marked } from 'marked';
 import type { DocumentFormData } from './types';
-import { useAuth } from './AuthContext';
+import { useAuth, type AuthUser } from './AuthContext';
+import SignupModal from './SignupModal';
 import html2pdf from 'html2pdf.js';
 
 interface Props {
@@ -45,9 +46,10 @@ function fillTemplate(template: string, data: DocumentFormData): string {
 }
 
 export default function DocumentPreview(props: Props) {
-  const { auth } = useAuth();
+  const { auth, login } = useAuth();
   const [downloading, setDownloading] = createSignal(false);
   const [saveState, setSaveState] = createSignal<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [showSignupModal, setShowSignupModal] = createSignal(false);
 
   const [rawTemplate] = createResource(
     () => props.documentType,
@@ -83,9 +85,7 @@ export default function DocumentPreview(props: Props) {
     setDownloading(false);
   }
 
-  async function saveDocument() {
-    const token = auth().token;
-    if (!token) return;
+  async function saveDocument(token: string): Promise<boolean> {
     setSaveState('saving');
     const date = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     const title = `${props.documentType} — ${date}`;
@@ -97,9 +97,28 @@ export default function DocumentPreview(props: Props) {
       });
       if (!res.ok) throw new Error();
       setSaveState('saved');
+      return true;
     } catch {
       setSaveState('error');
       setTimeout(() => setSaveState('idle'), 3000);
+      return false;
+    }
+  }
+
+  function handleSaveClick() {
+    if (auth().isGuest) {
+      setShowSignupModal(true);
+    } else if (auth().token) {
+      saveDocument(auth().token!);
+    }
+  }
+
+  async function handleSignupSuccess(token: string, user: AuthUser) {
+    login(token, user);
+    setShowSignupModal(false);
+    const success = await saveDocument(token);
+    if (success) {
+      localStorage.removeItem('prelegal_guest_form');
     }
   }
 
@@ -119,15 +138,15 @@ export default function DocumentPreview(props: Props) {
       <div class="preview-toolbar">
         <span class="preview-label">Live Preview</span>
         <div class="preview-actions">
-          {auth().token && (
+          <Show when={auth().token || auth().isGuest}>
             <button
               class={`btn btn-save ${saveState()}`}
-              onClick={saveDocument}
+              onClick={handleSaveClick}
               disabled={saveState() === 'saving' || saveState() === 'saved'}
             >
-              {saveLabel()}
+              {auth().isGuest ? 'Save Document' : saveLabel()}
             </button>
-          )}
+          </Show>
           <button
             class="btn btn-primary"
             onClick={downloadPdf}
@@ -141,6 +160,13 @@ export default function DocumentPreview(props: Props) {
       <div class="preview-scroll">
         <div class="document-paper document-generic" innerHTML={html()} />
       </div>
+
+      <Show when={showSignupModal()}>
+        <SignupModal
+          onSuccess={handleSignupSuccess}
+          onClose={() => setShowSignupModal(false)}
+        />
+      </Show>
     </div>
   );
 }
