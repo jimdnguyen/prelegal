@@ -8,11 +8,13 @@ export interface AuthUser {
 interface AuthState {
   user: AuthUser | null;
   token: string | null;
+  isGuest: boolean;
 }
 
 interface AuthContextValue {
   auth: () => AuthState;
   login: (token: string, user: AuthUser) => void;
+  loginAsGuest: () => void;
   logout: () => void;
 }
 
@@ -25,25 +27,32 @@ function loadFromStorage(): AuthState {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return JSON.parse(raw);
   } catch {}
-  return { user: null, token: null };
+  return { user: null, token: null, isGuest: false };
 }
 
 export const AuthProvider: ParentComponent = (props) => {
   const [auth, setAuth] = createSignal<AuthState>(loadFromStorage());
 
   function login(token: string, user: AuthUser) {
-    const state = { user, token };
+    const state = { user, token, isGuest: false };
     setAuth(state);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }
 
-  function logout() {
-    setAuth({ user: null, token: null });
+  function loginAsGuest() {
+    const state = { user: null, token: null, isGuest: true };
+    setAuth(state);
     localStorage.removeItem(STORAGE_KEY);
   }
 
+  function logout() {
+    setAuth({ user: null, token: null, isGuest: false });
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem('prelegal_guest_form');
+  }
+
   return (
-    <AuthContext.Provider value={{ auth, login, logout }}>
+    <AuthContext.Provider value={{ auth, login, loginAsGuest, logout }}>
       {props.children}
     </AuthContext.Provider>
   );

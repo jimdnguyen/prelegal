@@ -4,7 +4,7 @@ import { useAuth } from './AuthContext';
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, loginAsGuest } = useAuth();
 
   const [tab, setTab] = createSignal<'signin' | 'signup'>('signin');
   const [email, setEmail] = createSignal('');
@@ -93,6 +93,17 @@ export default function Login() {
             {loading() ? 'Please wait…' : tab() === 'signin' ? 'Sign In' : 'Create Account'}
           </button>
         </form>
+
+        <div class="login-divider">
+          <span>or</span>
+        </div>
+
+        <button
+          class="btn btn-guest"
+          onClick={() => { loginAsGuest(); navigate('/app'); }}
+        >
+          Continue as Guest
+        </button>
 
         <p class="login-disclaimer">
           Documents generated are drafts only and subject to legal review.

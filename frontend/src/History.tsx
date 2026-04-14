@@ -7,8 +7,8 @@ export default function History() {
   const { auth, logout } = useAuth();
   const navigate = useNavigate();
 
-  // Route guard — redirect unauthenticated users to login
-  if (!auth().token) {
+  // Route guard — redirect unauthenticated users and guests to login
+  if (!auth().token || auth().isGuest) {
     navigate('/', { replace: true });
     return null;
   }
