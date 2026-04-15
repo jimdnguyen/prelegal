@@ -1,8 +1,8 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig, type ConfigEnv } from 'vitest/config';
 import solidPlugin from 'vite-plugin-solid';
 
-export default defineConfig({
-  plugins: [solidPlugin()],
+export default defineConfig(({ mode }: ConfigEnv) => ({
+  plugins: [solidPlugin({ hot: mode !== 'test' })],
   server: {
     port: 3000,
   },
@@ -10,7 +10,7 @@ export default defineConfig({
     target: 'esnext',
   },
   test: {
-    environment: 'node',
-    include: ['src/**/*.test.ts'],
+    environment: 'happy-dom',
+    include: ['src/**/*.test.{ts,tsx}'],
   },
-});
+}));
