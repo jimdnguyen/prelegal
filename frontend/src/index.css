@@ -16,6 +16,17 @@ body {
   color: #1a202c;
 }
 
+/* ── Demo Banner ───────────────────────────────── */
+.demo-banner {
+  background: #fffbeb;
+  border-bottom: 1px solid #f59e0b;
+  color: #92400e;
+  font-size: 13px;
+  padding: 8px 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
 /* ── Layout ────────────────────────────────────── */
 .app {
   display: flex;

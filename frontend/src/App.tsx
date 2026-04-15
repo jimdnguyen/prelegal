@@ -108,6 +108,10 @@ export default function App() {
         </div>
       </header>
 
+      <div class="demo-banner">
+        ⚠️ Demo mode — all saved documents and accounts are cleared when the server restarts.
+      </div>
+
       <Show
         when={documentType()}
         fallback={
