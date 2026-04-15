@@ -85,7 +85,7 @@ export default function App() {
           <div class="header-meta">
             <Show when={documentType()}>
               <span class="badge">AI Chat</span>
-              <button class="btn-change-doc" onClick={() => { setDocumentType(null); setFormData({}); }}>
+              <button class="btn-change-doc" onClick={() => { localStorage.removeItem('prelegal_guest_form'); setDocumentType(null); setFormData({}); }}>
                 Change Document
               </button>
             </Show>

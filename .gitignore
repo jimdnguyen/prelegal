@@ -52,6 +52,12 @@ Thumbs.db
 # SQLite
 *.db
 
+# Claude Code
+.claude/settings.local.json
+
+# Playwright
+.playwright/
+
 # Misc
 *.bak
 *.tmp

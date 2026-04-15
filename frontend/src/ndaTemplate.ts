@@ -80,11 +80,11 @@ function renderCoverPage(data: NdaFormData): string {
       <div class="field-value">
         <div class="checkbox-item${mndaFixed ? ' checked' : ''}">
           <span class="checkbox">${mndaFixed ? '&#9745;' : '&#9744;'}</span>
-          Expires <strong>${data.mndaTermYears} year${data.mndaTermYears !== 1 ? 's' : ''}</strong> from Effective Date.
+          <span>Expires <strong>${data.mndaTermYears} year${data.mndaTermYears !== 1 ? 's' : ''}</strong> from Effective Date.</span>
         </div>
         <div class="checkbox-item${!mndaFixed ? ' checked' : ''}">
           <span class="checkbox">${!mndaFixed ? '&#9745;' : '&#9744;'}</span>
-          Continues until terminated in accordance with the terms of the MNDA.
+          <span>Continues until terminated in accordance with the terms of the MNDA.</span>
         </div>
       </div>
     </div>
@@ -95,11 +95,11 @@ function renderCoverPage(data: NdaFormData): string {
       <div class="field-value">
         <div class="checkbox-item${confFixed ? ' checked' : ''}">
           <span class="checkbox">${confFixed ? '&#9745;' : '&#9744;'}</span>
-          <strong>${data.confidentialityTermYears} year${data.confidentialityTermYears !== 1 ? 's' : ''}</strong> from Effective Date, but in the case of trade secrets until Confidential Information is no longer considered a trade secret under applicable laws.
+          <span><strong>${data.confidentialityTermYears} year${data.confidentialityTermYears !== 1 ? 's' : ''}</strong> from Effective Date, but in the case of trade secrets until Confidential Information is no longer considered a trade secret under applicable laws.</span>
         </div>
         <div class="checkbox-item${!confFixed ? ' checked' : ''}">
           <span class="checkbox">${!confFixed ? '&#9745;' : '&#9744;'}</span>
-          In perpetuity.
+          <span>In perpetuity.</span>
         </div>
       </div>
     </div>
