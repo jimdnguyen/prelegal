@@ -11,6 +11,15 @@ AI-powered legal document generator. Chat with an AI assistant to fill in 12 typ
 
 ---
 
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/document-selector.png" width="100%" alt="Document type selector" />
+  <img src="docs/screenshots/chat-preview.png" width="100%" alt="AI chat with live document preview" />
+</p>
+
+---
+
 ## Features
 
 - **12 legal document types** — NDAs, SLAs, DPAs, partnership agreements, software licenses, and more
