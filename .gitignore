@@ -60,3 +60,10 @@ Thumbs.db
 # Misc
 *.bak
 *.tmp
+
+# Vite cache
+frontend/.vite/
+
+# Debug/utility scripts
+scripts/inspect-dom.js
+scripts/screenshot.js
