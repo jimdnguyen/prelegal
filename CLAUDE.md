@@ -18,7 +18,7 @@ When instructed to build a feature:
 
 ## AI Design
 
-Use LiteLLM via OpenRouter with `openai/gpt-oss-120b:free` as the primary model, with fallback routing to other free models via `extra_body={"models": [...], "route": "fallback"}`. Do NOT use `openrouter/free` — it routes to a broken "Stealth" provider. Cerebras is no longer available on OpenRouter's free tier.
+Use LiteLLM via OpenRouter with `openai/gpt-oss-120b:free` as the primary model, with fallback routing to other free models via `extra_body={"models": [...], "route": "fallback"}`. Do NOT use `openrouter/free` — it routes to a broken "Stealth" provider. Use `openrouter/openrouter/free` if you want OpenRouter's generic free routing, or an explicit model string like `openrouter/openai/gpt-oss-120b:free`. Cerebras is no longer available on OpenRouter's free tier.
 
 Use `response_format={"type": "json_object"}` (not a Pydantic model) for structured outputs — passing a Pydantic model causes incompatible routing on the free tier. Instead, instruct the model via the system prompt to return JSON in the expected schema and parse with `model_validate_json`.
 
