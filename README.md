@@ -205,6 +205,66 @@ uv run pytest -v
 
 ---
 
+## Architecture
+
+### Request Flow
+
+```
+Browser (SolidJS)
+  │
+  ├── /                     Login.tsx
+  │     ├── POST /api/auth/register ──► backend/routes/auth.py ──► SQLite (users)
+  │     └── POST /api/auth/login    ──► JWT token → AuthContext (localStorage)
+  │
+  ├── /app                  App.tsx
+  │     ├── DocumentSelector.tsx
+  │     │     └── GET /api/catalog  ──► catalog.json (12 document types)
+  │     ├── Chat.tsx
+  │     │     └── POST /api/assist  ──► llm.py → OpenRouter (GPT-oss-120b)
+  │     │                                         └── field_updates[] → formData
+  │     └── DocumentPreview.tsx
+  │           └── POST /api/documents (Bearer JWT) ──► SQLite (saved docs)
+  │
+  └── /history              History.tsx
+        ├── GET  /api/documents      ──► list saved documents
+        └── GET  /api/documents/{id} ──► load + resume in /app
+```
+
+### Component Hierarchy
+
+```
+App.tsx
+├── AuthContext (context provider — JWT, user info, localStorage)
+├── Router
+│   ├── /         → Login.tsx
+│   │               ├── Sign In tab  → POST /api/auth/login
+│   │               ├── Create Account tab → POST /api/auth/register
+│   │               └── Continue as Guest → guest session (no save)
+│   ├── /app      → App.tsx (auth-gated)
+│   │               ├── DocumentSelector.tsx  (step 1 — pick document type)
+│   │               ├── Chat.tsx              (step 2 — AI chat fills fields)
+│   │               └── DocumentPreview.tsx   (step 3 — preview + PDF + save)
+│   └── /history  → History.tsx (auth-gated, registered users only)
+```
+
+### How Templates Work
+
+```
+catalog.json                     ← source of truth for all 12 document types
+    │
+    └── filename: "templates/Mutual-NDA.md"
+              │
+              └── backend/documents.py
+                    ├── extract_fields()  → finds all {{field_name}} placeholders
+                    └── build_system_prompt()  → per-document LLM instructions
+                              │
+                              └── POST /api/assist
+                                    ├── LiteLLM → OpenRouter
+                                    └── returns field_updates: [{key, value}, ...]
+```
+
+---
+
 ## Architecture Notes
 
 - **AI routing** — Uses `openai/gpt-oss-120b:free` as the primary model with automatic fallback to other free models. Structured output is requested via system prompt + JSON parse (not Pydantic schema) for compatibility with free-tier routing.
@@ -212,3 +272,60 @@ uv run pytest -v
 - **Auth** — JWT tokens with 30-day expiry. Passwords hashed with bcrypt. Guest users get full document generation without an account; saving requires registration.
 - **Static serving** — The frontend is compiled during the Docker build and served directly by FastAPI from `/app/dist/`. No separate web server needed.
 - **Ephemeral database** — SQLite is created fresh on each container start. This is intentional for the demo deployment.
+
+---
+
+## Adding a New Document Type
+
+Three steps — no backend code changes required.
+
+### Step 1 — Create the template
+
+Add a Markdown file to `templates/`. Use `{{field_name}}` placeholders for all fillable fields:
+
+```markdown
+# Independent Contractor Agreement
+
+This agreement is between **{{company_name}}** ("Company") and **{{contractor_name}}** ("Contractor"),
+effective **{{effective_date}}**.
+
+## Scope of Work
+
+{{scope_of_work}}
+
+## Payment
+
+The Company agrees to pay ${{rate_per_hour}} per hour...
+```
+
+Use descriptive snake_case names — the backend uses them verbatim to build the AI prompt.
+
+### Step 2 — Register in `catalog.json`
+
+Add an entry to the top-level array:
+
+```json
+{
+  "name": "Independent Contractor Agreement",
+  "description": "Agreement between a company and an independent contractor covering scope, payment rate, IP ownership, and termination.",
+  "filename": "templates/independent-contractor-agreement.md"
+}
+```
+
+The `name` field is the document type identifier used in the API and database. It must be unique.
+
+### Step 3 — Add a test
+
+Extend `backend/test_auth_documents.py` with a save test for the new type to verify end-to-end field round-tripping:
+
+```python
+def test_save_contractor_agreement(client, auth_headers):
+    resp = client.post("/api/documents", json={
+        "title": "My Contract",
+        "document_type": "Independent Contractor Agreement",
+        "form_data": {"company_name": "Acme", "contractor_name": "Jane Doe"},
+    }, headers=auth_headers)
+    assert resp.status_code == 200
+```
+
+That's it — the frontend automatically includes the new type in the document selector grid, and the AI chat system prompt is generated dynamically from the template's placeholders.
