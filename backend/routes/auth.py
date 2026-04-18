@@ -1,4 +1,6 @@
 """Authentication endpoints: register and login."""
+import re
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
@@ -10,10 +12,28 @@ from models import AuthRequest, AuthResponse
 router = APIRouter()
 
 
+def validate_email(email: str) -> None:
+    """Validate email format. Raises HTTPException if invalid."""
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    if not re.match(pattern, email):
+        raise HTTPException(status_code=422, detail="Invalid email format")
+
+
+def validate_password(password: str) -> None:
+    """Validate password strength. Raises HTTPException if too weak."""
+    if len(password) < 8:
+        raise HTTPException(
+            status_code=422, detail="Password must be at least 8 characters"
+        )
+
+
 @router.post("/auth/register", response_model=AuthResponse)
 def register(
     request: AuthRequest, session: Session = Depends(get_session)
 ) -> AuthResponse:
+    validate_email(request.email)
+    validate_password(request.password)
+
     existing = session.exec(select(User).where(User.email == request.email)).first()
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")

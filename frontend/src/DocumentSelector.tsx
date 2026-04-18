@@ -19,10 +19,15 @@ export default function DocumentSelector(props: Props) {
       </div>
 
       <Show when={catalog()} fallback={<div class="doc-selector-loading">Loading documents…</div>}>
-        <div class="doc-grid">
+        <div class="doc-grid" role="list">
           <For each={catalog()}>
             {entry => (
-              <button class="doc-card" onClick={() => props.onSelect(entry.name)}>
+              <button
+                class="doc-card"
+                role="listitem"
+                aria-label={`Create ${entry.name}`}
+                onClick={() => props.onSelect(entry.name)}
+              >
                 <div class="doc-card-name">{entry.name}</div>
                 <div class="doc-card-desc">{entry.description}</div>
               </button>

@@ -42,15 +42,15 @@ export default function SignupModal(props: Props) {
   }
 
   return (
-    <div class="modal-backdrop" onClick={handleBackdropClick}>
-      <div class="modal-content">
-        <button class="modal-close" onClick={props.onClose} aria-label="Close">
+    <div class="modal-backdrop" onClick={handleBackdropClick} role="presentation">
+      <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <button class="modal-close" onClick={props.onClose} aria-label="Close sign up dialog">
           &times;
         </button>
-        <h2 class="modal-title">Sign up to save your document</h2>
+        <h2 class="modal-title" id="modal-title">Sign up to save your document</h2>
         <p class="modal-subtitle">Create an account to save and access your documents anytime.</p>
 
-        <form class="modal-form" onSubmit={submit}>
+        <form class="modal-form" onSubmit={submit} aria-label="Create account form">
           <div class="form-group">
             <label class="form-label" for="signup-email">Email</label>
             <input
@@ -62,6 +62,7 @@ export default function SignupModal(props: Props) {
               onInput={e => setEmail(e.currentTarget.value)}
               required
               autocomplete="email"
+              aria-label="Email address"
             />
           </div>
           <div class="form-group">
@@ -75,9 +76,10 @@ export default function SignupModal(props: Props) {
               onInput={e => setPassword(e.currentTarget.value)}
               required
               autocomplete="new-password"
+              aria-label="Password (minimum 8 characters)"
             />
           </div>
-          {error() && <div class="login-error">{error()}</div>}
+          {error() && <div class="login-error" role="alert">{error()}</div>}
           <button class="btn btn-primary" type="submit" disabled={loading()}>
             {loading() ? 'Creating account...' : 'Create Account & Save'}
           </button>

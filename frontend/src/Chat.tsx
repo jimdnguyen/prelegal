@@ -85,17 +85,19 @@ export default function Chat(props: Props) {
 
   return (
     <div class="chat-pane">
-      <div class="chat-messages" ref={scrollRef}>
+      <div class="chat-messages" ref={scrollRef} role="log" aria-live="polite" aria-label="Chat conversation">
         <For each={messages()}>
           {msg => (
             <div class={`chat-bubble ${msg.role}`}>
-              <div class="bubble-content">{msg.content}</div>
+              <div class="bubble-content" role={msg.role === 'user' ? 'status' : undefined}>
+                {msg.content}
+              </div>
             </div>
           )}
         </For>
         {loading() && (
           <div class="chat-bubble assistant">
-            <div class="bubble-content chat-typing">
+            <div class="bubble-content chat-typing" aria-label="AI is typing">
               <span /><span /><span />
             </div>
           </div>
@@ -106,6 +108,7 @@ export default function Chat(props: Props) {
         <textarea
           class="chat-input"
           placeholder="Type your message… (Enter to send, Shift+Enter for new line)"
+          aria-label="Chat message input"
           rows={3}
           value={input()}
           onInput={e => setInput(e.currentTarget.value)}
@@ -115,6 +118,7 @@ export default function Chat(props: Props) {
         <button
           class="btn btn-send"
           onClick={send}
+          aria-label="Send message"
           disabled={loading() || !input().trim()}
         >
           Send

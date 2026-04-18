@@ -46,22 +46,26 @@ export default function Login() {
           <p>AI-powered legal document drafting</p>
         </div>
 
-        <div class="login-tabs">
+        <div class="login-tabs" role="tablist">
           <button
             class={`login-tab ${tab() === 'signin' ? 'active' : ''}`}
             onClick={() => { setTab('signin'); setError(''); }}
+            role="tab"
+            aria-selected={tab() === 'signin'}
           >
             Sign In
           </button>
           <button
             class={`login-tab ${tab() === 'signup' ? 'active' : ''}`}
             onClick={() => { setTab('signup'); setError(''); }}
+            role="tab"
+            aria-selected={tab() === 'signup'}
           >
             Create Account
           </button>
         </div>
 
-        <form class="login-form" onSubmit={submit}>
+        <form class="login-form" onSubmit={submit} aria-label={tab() === 'signin' ? 'Sign in form' : 'Create account form'}>
           <div class="form-group">
             <label class="form-label" for="email">Email</label>
             <input
@@ -73,6 +77,7 @@ export default function Login() {
               onInput={e => setEmail(e.currentTarget.value)}
               required
               autocomplete="email"
+              aria-label="Email address"
             />
           </div>
           <div class="form-group">
@@ -86,9 +91,10 @@ export default function Login() {
               onInput={e => setPassword(e.currentTarget.value)}
               required
               autocomplete={tab() === 'signup' ? 'new-password' : 'current-password'}
+              aria-label="Password (minimum 8 characters)"
             />
           </div>
-          {error() && <div class="login-error">{error()}</div>}
+          {error() && <div class="login-error" role="alert">{error()}</div>}
           <button class="btn btn-primary login-btn" type="submit" disabled={loading()}>
             {loading() ? 'Please wait…' : tab() === 'signin' ? 'Sign In' : 'Create Account'}
           </button>
@@ -100,6 +106,7 @@ export default function Login() {
 
         <button
           class="btn btn-guest"
+          aria-label="Continue as guest without creating an account"
           onClick={() => { loginAsGuest(); navigate('/app'); }}
         >
           Continue as Guest

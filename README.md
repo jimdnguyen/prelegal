@@ -127,6 +127,8 @@ bash scripts/stop-linux.sh    # Linux
 | GET | `/api/documents` | Bearer JWT | List saved documents |
 | GET | `/api/documents/{id}` | Bearer JWT | Retrieve a saved document |
 
+**Interactive API Docs**: FastAPI provides automatic OpenAPI/Swagger documentation at `/docs` when the server is running. Use this to explore and test all endpoints interactively.
+
 ---
 
 ## Project Structure

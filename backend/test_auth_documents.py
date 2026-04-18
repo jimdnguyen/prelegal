@@ -4,7 +4,7 @@ import pytest
 
 @pytest.fixture
 def registered_user(client):
-    resp = client.post("/api/auth/register", json={"email": "test@example.com", "password": "pass123"})
+    resp = client.post("/api/auth/register", json={"email": "test@example.com", "password": "password123"})
     assert resp.status_code == 200
     return resp.json()
 
@@ -17,7 +17,7 @@ def auth_headers(registered_user):
 # --- Auth tests ---
 
 def test_register(client):
-    resp = client.post("/api/auth/register", json={"email": "a@b.com", "password": "secret"})
+    resp = client.post("/api/auth/register", json={"email": "a@b.com", "password": "secretpassword"})
     assert resp.status_code == 200
     data = resp.json()
     assert "token" in data
@@ -25,19 +25,31 @@ def test_register(client):
 
 
 def test_register_duplicate(client, registered_user):
-    resp = client.post("/api/auth/register", json={"email": "test@example.com", "password": "other"})
+    resp = client.post("/api/auth/register", json={"email": "test@example.com", "password": "otherpassword"})
     assert resp.status_code == 400
 
 
 def test_login(client, registered_user):
-    resp = client.post("/api/auth/login", json={"email": "test@example.com", "password": "pass123"})
+    resp = client.post("/api/auth/login", json={"email": "test@example.com", "password": "password123"})
     assert resp.status_code == 200
     assert "token" in resp.json()
 
 
 def test_login_wrong_password(client, registered_user):
-    resp = client.post("/api/auth/login", json={"email": "test@example.com", "password": "wrong"})
+    resp = client.post("/api/auth/login", json={"email": "test@example.com", "password": "wrongpassword"})
     assert resp.status_code == 401
+
+
+def test_register_invalid_email(client):
+    resp = client.post("/api/auth/register", json={"email": "invalid-email", "password": "password123"})
+    assert resp.status_code == 422
+    assert "Invalid email format" in resp.json()["detail"]
+
+
+def test_register_weak_password(client):
+    resp = client.post("/api/auth/register", json={"email": "test@example.com", "password": "short"})
+    assert resp.status_code == 422
+    assert "at least 8 characters" in resp.json()["detail"]
 
 
 # --- Document tests ---
@@ -95,7 +107,7 @@ def test_get_document_other_user(client, auth_headers):
     }, headers=auth_headers)
     doc_id = save.json()["id"]
 
-    other = client.post("/api/auth/register", json={"email": "other@example.com", "password": "pw"})
+    other = client.post("/api/auth/register", json={"email": "other@example.com", "password": "otherpassword"})
     other_headers = {"Authorization": f"Bearer {other.json()['token']}"}
 
     resp = client.get(f"/api/documents/{doc_id}", headers=other_headers)

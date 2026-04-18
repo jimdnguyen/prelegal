@@ -662,6 +662,186 @@ textarea {
   .document-paper {
     padding: 32px 24px;
   }
+
+  .doc-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .app-main {
+    grid-template-rows: auto 50vh 1fr;
+  }
+
+  .form-pane {
+    height: auto;
+    max-height: 50vh;
+  }
+
+  .header-content {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .header-meta {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .doc-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+  }
+
+  .doc-card {
+    padding: 16px;
+  }
+
+  .preview-scroll {
+    padding: 16px;
+  }
+
+  .document-paper {
+    padding: 24px 16px;
+    margin: 0 auto;
+    max-width: 100%;
+  }
+
+  .nda-form {
+    padding: 16px;
+  }
+
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .chat-messages {
+    padding: 12px 12px;
+    gap: 10px;
+  }
+
+  .chat-input-area {
+    padding: 10px;
+    gap: 6px;
+  }
+
+  .btn-send {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .preview-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+
+  .preview-actions {
+    width: 100%;
+  }
+
+  .preview-actions .btn {
+    flex: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    padding: 0 12px;
+  }
+
+  .header-content {
+    height: 56px;
+    gap: 8px;
+  }
+
+  .header-brand h1 {
+    font-size: 16px;
+  }
+
+  .brand-icon {
+    font-size: 24px;
+  }
+
+  .badge {
+    display: none;
+  }
+
+  .header-hint {
+    display: none;
+  }
+
+  .header-meta {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .doc-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .doc-selector-header h2 {
+    font-size: 18px;
+  }
+
+  .doc-selector-header {
+    margin-bottom: 24px;
+  }
+
+  .selector-main {
+    padding: 20px 12px;
+  }
+
+  .document-paper {
+    padding: 16px 12px;
+    font-size: 10pt;
+  }
+
+  .document-paper .doc-title {
+    font-size: 16pt;
+    margin-bottom: 20px;
+  }
+
+  .document-paper h2 {
+    font-size: 12pt;
+    margin-top: 24px;
+    margin-bottom: 12px;
+  }
+
+  .chat-input {
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+
+  .btn-send {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .form-section h2 {
+    font-size: 12px;
+  }
+
+  .login-card {
+    padding: 32px 20px;
+    margin: 16px;
+  }
+
+  .history-main {
+    padding: 20px 12px;
+  }
+
+  .history-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .history-card-date {
+    margin-left: 0;
+  }
 }
 
 /* ── Login Page ────────────────────────────────── */
@@ -1112,6 +1292,44 @@ textarea {
   align-items: center;
   gap: 16px;
   font-size: 15px;
+}
+
+/* ── Reduced Motion ────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Disable bounce animation for typing indicator */
+  .chat-typing span {
+    animation: none !important;
+  }
+
+  /* Disable all transitions */
+  input[type="text"],
+  input[type="date"],
+  input[type="number"],
+  textarea,
+  select,
+  .chat-input,
+  .btn-send,
+  .btn,
+  .doc-card,
+  .history-card,
+  .login-tab,
+  .form-input,
+  .btn-nav,
+  .btn-logout,
+  .btn-change-doc,
+  .btn-guest,
+  .modal-close {
+    transition: none !important;
+  }
 }
 
 @media print {

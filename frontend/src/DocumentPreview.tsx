@@ -142,6 +142,7 @@ export default function DocumentPreview(props: Props) {
             <button
               class={`btn btn-save ${saveState()}`}
               onClick={handleSaveClick}
+              aria-label={saveLabel()}
               disabled={saveState() === 'saving' || saveState() === 'saved'}
             >
               {auth().isGuest ? 'Save Document' : saveLabel()}
@@ -150,6 +151,7 @@ export default function DocumentPreview(props: Props) {
           <button
             class="btn btn-primary"
             onClick={downloadPdf}
+            aria-label="Download document as PDF"
             disabled={downloading()}
             title="Download as PDF"
           >
@@ -157,7 +159,7 @@ export default function DocumentPreview(props: Props) {
           </button>
         </div>
       </div>
-      <div class="preview-scroll">
+      <div class="preview-scroll" role="region" aria-label="Document preview" aria-live="polite">
         <div class="document-paper document-generic" innerHTML={html()} />
       </div>
 
