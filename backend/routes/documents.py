@@ -65,7 +65,11 @@ def list_documents(
     user: User = Depends(get_current_user),
     session: Session = Depends(get_session),
 ) -> list[DocumentListItem]:
-    stmt = select(GeneratedDocument).where(GeneratedDocument.user_id == user.id).order_by(GeneratedDocument.created_at.desc())
+    stmt = (
+        select(GeneratedDocument)
+        .where(GeneratedDocument.user_id == user.id)
+        .order_by(GeneratedDocument.created_at.desc())
+    )
     docs = session.exec(stmt).all()
     return [
         DocumentListItem(

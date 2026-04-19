@@ -2,11 +2,11 @@
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.pool import StaticPool
-from sqlmodel import SQLModel, Session, create_engine
+from sqlmodel import Session, SQLModel, create_engine
 
+import db_models  # noqa: F401 — registers table metadata
 from database import get_session
 from main import app
-import db_models  # noqa: F401 — registers table metadata
 
 
 @pytest.fixture

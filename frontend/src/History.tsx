@@ -15,7 +15,7 @@ export default function History() {
 
   const [openError, setOpenError] = createSignal('');
 
-  const [docs, { refetch }] = createResource<SavedDocumentSummary[]>(async () => {
+  const [docs] = createResource<SavedDocumentSummary[]>(async () => {
     const token = auth().token;
     if (!token) return [];
     const res = await fetch('/api/documents', {

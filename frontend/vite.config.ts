@@ -12,5 +12,9 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
   test: {
     environment: 'happy-dom',
     include: ['src/**/*.test.{ts,tsx}'],
+    coverage: {
+      provider: 'v8' as const,
+      reporter: ['text', 'text-summary'],
+    },
   },
 }));

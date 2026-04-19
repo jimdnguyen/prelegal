@@ -8,7 +8,7 @@ import { useAuth } from './AuthContext';
 import type { DocumentFormData, SavedDocument } from './types';
 
 export default function App() {
-  const { auth, login, logout } = useAuth();
+  const { auth, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation<{ resumeDoc?: SavedDocument }>();
 
@@ -59,7 +59,9 @@ export default function App() {
             setFormData(savedData);
           }
         }
-      } catch {}
+      } catch {
+        // ignore parse errors
+      }
     }
   });
 

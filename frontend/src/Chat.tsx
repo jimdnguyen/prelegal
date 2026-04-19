@@ -22,6 +22,7 @@ export default function Chat(props: Props) {
   const [messages, setMessages] = createSignal<Message[]>([initialMessage(props.documentType)]);
   const [input, setInput] = createSignal('');
   const [loading, setLoading] = createSignal(false);
+  // eslint-disable-next-line no-unassigned-vars
   let scrollRef: HTMLDivElement | undefined;
 
   createEffect(() => {

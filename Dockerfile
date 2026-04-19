@@ -8,6 +8,7 @@ RUN npm run build
 
 # Stage 2: FastAPI backend + static frontend
 FROM python:3.13-slim
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
 RUN pip install uv --no-cache-dir
 
 WORKDIR /app
@@ -27,4 +28,6 @@ COPY templates/ ./templates/
 COPY --from=frontend-build /app/dist ./dist
 
 EXPOSE 8000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:8000/api/health || exit 1
 CMD ["uv", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
