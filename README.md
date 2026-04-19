@@ -103,6 +103,17 @@ AI-powered legal document generator. Chat with an AI assistant to fill in 12 typ
 
 4. Open [http://localhost:8000](http://localhost:8000)
 
+### Makefile
+
+```bash
+make start       # build and start on http://localhost:8000
+make stop        # stop containers
+make logs        # tail container logs
+make test        # run backend + frontend unit tests
+make test-e2e    # run Playwright E2E (needs app running)
+make clean       # stop and delete all data
+```
+
 ### Stop
 
 ```bash
