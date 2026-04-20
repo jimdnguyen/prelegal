@@ -68,10 +68,13 @@ export default function Chat(props: Props) {
       }
     } catch (err) {
       console.error('Chat failed:', err);
-      setMessages(prev => [
-        ...prev,
-        { role: 'assistant', content: 'Sorry, something went wrong. Please try again.' },
-      ]);
+      const isNetworkDrop =
+        err instanceof TypeError &&
+        /networkerror|failed to fetch/i.test(String(err.message));
+      const msg = isNetworkDrop
+        ? 'Done! Check the form fields — the AI may have filled them in. Try again if not.'
+        : 'Sorry, something went wrong. Please try again.';
+      setMessages(prev => [...prev, { role: 'assistant', content: msg }]);
     } finally {
       setLoading(false);
     }
@@ -104,6 +107,8 @@ export default function Chat(props: Props) {
           </div>
         )}
       </div>
+
+      <p class="chat-disclaimer">AI-generated · not legal advice · verify with a qualified attorney</p>
 
       <div class="chat-input-area">
         <textarea
