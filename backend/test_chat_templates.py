@@ -1,8 +1,5 @@
 """Tests for /api/assist, /api/catalog, and /api/templates endpoints."""
-from collections import defaultdict
 from unittest.mock import patch
-
-import pytest
 
 from models import ChatResponse
 
