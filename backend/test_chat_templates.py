@@ -3,7 +3,6 @@ from unittest.mock import patch
 
 from models import ChatResponse
 
-
 # ─── /api/assist ─────────────────────────────────────────────────────────────
 
 def _mock_chat_response():
